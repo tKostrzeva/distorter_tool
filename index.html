@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Distorter | v01</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+
+  <div id="root">
+    <div class="canvas-section">
+      <div class="canvas-label"><span>Distorter | v01</span></div>
+      <div id="canvas-container"></div>
+    </div>
+  </div>
+
+  <div class="bottom-sheet" id="bottom-sheet">
+    <div class="options-toggle">
+      <button class="options-btn" id="optionsBtn">↑ options</button>
+    </div>
+    <div class="panel" id="panel">
+      <div id="controls">
+        <input type="file" id="file-input" accept="image/*" style="display:none">
+
+        <!-- 1 — upload / camera -->
+        <div class="upload-row">
+          <button class="btn btn-upload" id="uploadBtn">↑ upload photo</button>
+          <button class="btn-flip" id="flipCamBtn">front</button>
+        </div>
+
+        <!-- 2 — aspect ratio -->
+        <div class="ratio-row" id="ratio-buttons"></div>
+
+        <!-- 3 — resolution | random -->
+        <div class="twin-sliders">
+          <div class="twin-col">
+            <div class="mini-label">resolution</div>
+            <div class="slider-row">
+              <input type="range" id="resolution" min="2" max="64" value="12" step="1">
+              <button class="reset-btn" data-id="resolution">↺</button>
+            </div>
+          </div>
+          <div class="twin-col">
+            <div class="mini-label">random</div>
+            <div class="slider-row">
+              <input type="range" id="noiseSeed" min="0" max="999" value="0" step="5">
+              <button class="reset-btn" onclick="resetAll()">↺</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 — mirror / symmetry -->
+        <select id="distorterMirrorSelect">
+          <option value="none">asymetric</option>
+          <option value="x">mirror X</option>
+          <option value="y">mirror Y</option>
+          <option value="xy">mirror X + Y</option>
+          <option value="random">random</option>
+        </select>
+
+        <!-- 5 — noise scale (full width) -->
+        <div class="slider-row">
+          <input type="range" id="noiseScale" min="1" max="300" value="30" step="1">
+          <button class="reset-btn" data-id="noiseScale">↺</button>
+        </div>
+
+        <!-- 6 — offset X | Y -->
+        <div class="twin-sliders">
+          <div class="twin-col">
+            <div class="slider-row">
+              <span class="slider-label">X</span>
+              <input type="range" id="noiseOffX" min="-500" max="500" value="0" step="10">
+              <button class="reset-btn" data-id="noiseOffX">↺</button>
+            </div>
+          </div>
+          <div class="twin-col">
+            <div class="slider-row">
+              <span class="slider-label">Y</span>
+              <input type="range" id="noiseOffY" min="-500" max="500" value="0" step="10">
+              <button class="reset-btn" data-id="noiseOffY">↺</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7 — play/pause & save -->
+        <button class="btn-play" id="playPauseBtn">▶ play</button>
+        <button class="btn btn-save" onclick="doSave()">save</button>
+      </div>
+
+      <footer class="footer">
+        <p>
+          Generative tool made by <a href="https://www.kostrzeva.com">Tomáš Kostrzeva</a>
+          <br><br>
+          Outputs licensed with <a href="https://creativecommons.org/cc-licenses/" target="_blank">CC BY</a>
+          &nbsp;| &nbsp;
+          Support me with <a href="https://buymeacoffee.com/tomaskostrzeva" target="_blank">Buy me a coffee</a>
+        </p>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    const panel       = document.getElementById('panel');
+    const optionsBtn  = document.getElementById('optionsBtn');
+    const bottomSheet = document.getElementById('bottom-sheet');
+    let panelOpen = true;
+
+    function updateSheetH() {
+      document.documentElement.style.setProperty('--sheet-h', bottomSheet.offsetHeight + 'px');
+      if (typeof resizeToRatio === 'function') resizeToRatio();
+    }
+
+    optionsBtn.textContent = '↓ options';
+    setTimeout(() => {
+      panel.style.height = panel.scrollHeight + 'px';
+      updateSheetH();
+    }, 0);
+
+    optionsBtn.addEventListener('click', () => {
+      panelOpen = !panelOpen;
+      panel.style.height = panelOpen ? panel.scrollHeight + 'px' : '0';
+      optionsBtn.textContent = panelOpen ? '↓ options' : '↑ options';
+      setTimeout(updateSheetH, 360);
+    });
+
+    document.getElementById('uploadBtn').addEventListener('click', () => {
+      document.getElementById('file-input').click();
+    });
+  </script>
+
+  <script src="sketch.js"></script>
+</body>
+</html>
